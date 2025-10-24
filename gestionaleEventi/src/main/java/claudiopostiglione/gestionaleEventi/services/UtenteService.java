@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -22,11 +23,28 @@ public class UtenteService {
 
     @Autowired
     private UtenteRepository utenteRepository;
+    @Autowired
+    private PasswordEncoder bCrypt;
 
 
     //OPERAZIONI CRUD per gli utenti
 
-    // 1. per la chiamata GET che restituisce la lista degli utenti
+    // 1. per la chiamta POST per la registrazione di un utente
+    public Utente createUtente(UtenteDTO body) {
+
+        //Controllo se c'è già un utente con l'email inserita
+        this.utenteRepository.findByEmail(body.email()).ifPresent(utente -> {
+            throw new BadRequestException("L'email " + utente.getEmail() + " esiste già");
+        });
+
+        Utente newUtente = new Utente(body.nome(), body.cognome(), body.eta(), body.email(), bCrypt.encode(body.password()));
+        this.utenteRepository.save(newUtente);
+        log.info("L'utente " + newUtente.getNome() + " " + newUtente.getCognome() + " con ID: " + newUtente.getId() + " è stato salvato correttamente");
+
+        return newUtente;
+    }
+
+    // 2. per la chiamata GET che restituisce la lista degli utenti
     public Page<Utente> findAllDipendenti(int numPage, int sizePage, String sortBy) {
         if (sizePage > 30) sizePage = 30;
         sortBy = "nome";
@@ -34,20 +52,20 @@ public class UtenteService {
         return this.utenteRepository.findAll(pageable);
     }
 
-    // 2. per la chiamata GET per un singolo utente
+    // 3. per la chiamata GET per un singolo utente
     public Utente findUtenteById(UUID utenteId) {
         return this.utenteRepository.findById(utenteId).orElseThrow(() -> new IdNotFoundException("L'utente con ID: " + utenteId + " non è stato trovato"));
     }
 
-    // 3. per la chiamata PUT per la modifica dell'utente
-    public Utente findUtenteByIdAndUpdate(UUID utenteId, UtenteDTO body){
+    // 4. per la chiamata PUT per la modifica dell'utente
+    public Utente findUtenteByIdAndUpdate(UUID utenteId, UtenteDTO body) {
 
-        Utente utenteFound  = this.findUtenteById(utenteId);
+        Utente utenteFound = this.findUtenteById(utenteId);
 
-        if(!utenteFound.getEmail().equals(body.email())){
-           this.utenteRepository.findByEmail(body.email()).ifPresent(utente -> {
-               throw new BadRequestException("L'email " + utente.getEmail() + " esiste già");
-           });
+        if (!utenteFound.getEmail().equals(body.email())) {
+            this.utenteRepository.findByEmail(body.email()).ifPresent(utente -> {
+                throw new BadRequestException("L'email " + utente.getEmail() + " esiste già");
+            });
         }
 
         utenteFound.setNome(body.nome());
@@ -63,14 +81,14 @@ public class UtenteService {
         return updateUtente;
     }
 
-    // 4. per la chiamata DELETE di un utente
-    public void findUtenteByIdAndDelete(UUID utenteId){
+    // 5. per la chiamata DELETE di un utente
+    public void findUtenteByIdAndDelete(UUID utenteId) {
         Utente utenteFound = this.findUtenteById(utenteId);
         this.utenteRepository.delete(utenteFound);
     }
 
 
-    public Utente findUtenteByEmail(String email){
+    public Utente findUtenteByEmail(String email) {
         return this.utenteRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'email " + email + " non è stata trovata"));
     }
 
