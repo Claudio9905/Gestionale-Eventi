@@ -24,13 +24,13 @@ public class AuthController {
 
 
     // 1. POST per LOGIN
-    @PostMapping
+    @PostMapping("/login")
     public LoginResponseDTO login (@RequestBody LoginDTO body){
         return new LoginResponseDTO(this.authService.checkAndCreateToken(body));
     }
 
     // 2. POST per REGISTER
-    @PostMapping
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public Utente register(@RequestBody @Validated UtenteDTO bodyUtente, BindingResult validationResult){
         if(validationResult.hasErrors()){

@@ -42,4 +42,5 @@ public class ExceptionsHandler extends RuntimeException {
     public ErrorsWithListDTO handleValidationException(ValidationExcpetion ex){
         return new ErrorsWithListDTO(ex.getMessage(), LocalDate.now(), ex.getErrorsMessages());
     }
+
 }
