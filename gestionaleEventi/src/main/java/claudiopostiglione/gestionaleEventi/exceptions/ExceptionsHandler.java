@@ -43,4 +43,11 @@ public class ExceptionsHandler extends RuntimeException {
         return new ErrorsWithListDTO(ex.getMessage(), LocalDate.now(), ex.getErrorsMessages());
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorsDTO handleException(Exception ex){
+        ex.printStackTrace();
+        return new ErrorsDTO(ex.getMessage(),LocalDate.now());
+    }
+
 }
