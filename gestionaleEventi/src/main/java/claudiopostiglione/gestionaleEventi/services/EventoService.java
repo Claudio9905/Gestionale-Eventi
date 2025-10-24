@@ -1,7 +1,9 @@
 package claudiopostiglione.gestionaleEventi.services;
 
 import claudiopostiglione.gestionaleEventi.entities.Evento;
+import claudiopostiglione.gestionaleEventi.entities.RuoloUtente;
 import claudiopostiglione.gestionaleEventi.entities.Utente;
+import claudiopostiglione.gestionaleEventi.exceptions.BadRequestException;
 import claudiopostiglione.gestionaleEventi.exceptions.IdNotFoundException;
 import claudiopostiglione.gestionaleEventi.payload.EventoDTO;
 import claudiopostiglione.gestionaleEventi.repositories.EventoRepository;
@@ -21,9 +23,25 @@ public class EventoService {
 
     @Autowired
     private EventoRepository eventoRepository;
+    @Autowired
+    private UtenteService utenteService;
 
 
     //OPERAZIONI CRUD per gli eventi
+
+    // 1. per la chiamata POST per la creazione di un evento
+    public Evento saveEvento(EventoDTO body){
+
+        Utente utenteFound = this.utenteService.findUtenteById(body.utenteId());
+
+        if(!utenteFound.getRole().equals(RuoloUtente.ORGANIZZATORE_DI_EVENTI)) throw new BadRequestException("L'utente " + utenteFound.getNome() + " " + utenteFound.getCognome() + " con ID: " + utenteFound.getId() + " non è un organizzatore di eventi");
+
+        Evento newEvento = new Evento(body.titolo(), body.descrizione(), body.dataEvento(), body.luogo(), body.numPostDisp());
+
+        this.eventoRepository.save(newEvento);
+        log.info("L'evento " + newEvento.getTitolo() + " con ID: " + newEvento.getId() + " è stato salvato correttamente");
+        return newEvento;
+    }
 
     // 2. per la chiamata GET che restituisce la lista degli eventi
     public Page<Evento> findAllEventi(int numPage, int sizePage, String sortBy) {
@@ -49,7 +67,9 @@ public class EventoService {
         eventoFound.setLuogo(body.luogo());
         eventoFound.setNumPostDisp(body.numPostDisp());
 
+
         Evento updateEvento = this.eventoRepository.save(eventoFound);
+
         log.info("L'evento " + updateEvento.getTitolo() + " con ID: " + updateEvento.getId() + " è stato aggiornato correttamente");
 
         return updateEvento;

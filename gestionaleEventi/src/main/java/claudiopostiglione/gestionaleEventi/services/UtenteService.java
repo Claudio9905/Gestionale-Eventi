@@ -6,6 +6,8 @@ import claudiopostiglione.gestionaleEventi.exceptions.IdNotFoundException;
 import claudiopostiglione.gestionaleEventi.exceptions.NotFoundException;
 import claudiopostiglione.gestionaleEventi.payload.UtenteDTO;
 import claudiopostiglione.gestionaleEventi.repositories.UtenteRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -25,7 +30,12 @@ public class UtenteService {
     private UtenteRepository utenteRepository;
     @Autowired
     private PasswordEncoder bCrypt;
+    @Autowired
+    private Cloudinary imageUploader;
 
+    //Questi attributi mi serviranno per controllare alcuni parametri del file
+    private static final long MAX_SIZE = 5 * 1024 * 1024; // corrispondono a 5MB
+    private static final List<String> ALLOWED_FORMAT = List.of("image/jpeg", "image/png");
 
     //OPERAZIONI CRUD per gli utenti
 
@@ -87,6 +97,31 @@ public class UtenteService {
         this.utenteRepository.delete(utenteFound);
     }
 
+    // 6. per la chiamata PATCH per l'upload delle immagini
+    public Utente uploadAvatarProfile(MultipartFile file, UUID utenteId) {
+
+        if (file.isEmpty()) throw new BadRequestException("File vuoto!");
+        if (file.getSize() > MAX_SIZE)
+            throw new BadRequestException("La dimensione del file è troppo grande, il limite è di 5MB");
+        if (!(ALLOWED_FORMAT.contains(file.getContentType())))
+            throw new BadRequestException("Attenzione, il formato del file è sbagliato. Formato file acconsentito: .jpeg, .png");
+
+        Utente utenteFound = this.findUtenteById(utenteId);
+
+        try {
+            //Cattura dell'URL dell'immagine
+            Map resultMap = imageUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageURL = (String) resultMap.get("url");
+
+            //Salvataggio dell'immagine catturata
+            utenteFound.setAvatar_url(imageURL);
+            this.utenteRepository.save(utenteFound);
+            return utenteFound;
+        } catch (Exception e) {
+            throw new BadRequestException("Errore nell'upload dell'immagine");
+        }
+
+    }
 
     public Utente findUtenteByEmail(String email) {
         return this.utenteRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'email " + email + " non è stata trovata"));
