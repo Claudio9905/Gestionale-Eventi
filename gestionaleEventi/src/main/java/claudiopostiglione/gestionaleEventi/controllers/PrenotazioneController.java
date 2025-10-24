@@ -45,6 +45,7 @@ public class PrenotazioneController {
 
     @DeleteMapping("/me/{prenotazioneId}")
     @PreAuthorize(("hasAuthority('UTENTE_NORMALE')"))
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void getPrenotazioneAndDelete(@AuthenticationPrincipal Utente currentUtente,@PathVariable UUID prenotazioneId){
         this.prenotazioneService.findPrenotazioneByIdAndDelete(prenotazioneId, currentUtente);
     }

@@ -17,7 +17,7 @@ public record EventoDTO(
         @NotNull(message = "La data dell'evento non può essere nulla")
         LocalDate dataEvento,
         @NotBlank(message = "Il luogo dell'evento è obbligatorio")
-        @Size(min = 2, max = 20, message = "Il luogo deve avere un minimo di 2 caratteri e un massimo di 20")
+        @Size(min = 2, max = 200, message = "Il luogo deve avere un minimo di 2 caratteri e un massimo di 20")
         String luogo,
         @NotNull(message = "Il numero di posti non può essere nullo")
         int numPostDisp,

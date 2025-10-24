@@ -24,13 +24,13 @@ public class EventoController {
 
     //Endpoint "/eventi/..."
     @GetMapping
-    @PreAuthorize(("hasAuthority('ADMIN','ORGANIZZATORE_DI_EVENTI')"))
+    @PreAuthorize(("hasAnyAuthority('ADMIN','ORGANIZZATORE_DI_EVENTI')"))
     public Page<Evento> getAllEventi(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy) {
         return this.eventoService.findAllEventi(page, size, sortBy);
     }
 
     @GetMapping("/{eventoId}")
-    @PreAuthorize(("hasAuthority('ADMIN','ORGANIZZATORE_DI_EVENTI')"))
+    @PreAuthorize(("hasAnyAuthority('ADMIN','ORGANIZZATORE_DI_EVENTI')"))
     @ResponseStatus(HttpStatus.FOUND)
     public Evento getEventoById(@PathVariable UUID eventoId) {
         return this.eventoService.findEventoById(eventoId);
