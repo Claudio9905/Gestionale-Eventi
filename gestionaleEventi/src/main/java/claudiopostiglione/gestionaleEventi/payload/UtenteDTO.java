@@ -21,7 +21,6 @@ public record UtenteDTO(
         @NotBlank(message = "La password è obbligatoria")
         @Size(min = 8, message = "La password deve avere un minimo di 8 caratteri")
         String password,
-        @NotNull(message = "Il ruolo non deve essere nullo")
         RuoloUtente role
 ) {
 }

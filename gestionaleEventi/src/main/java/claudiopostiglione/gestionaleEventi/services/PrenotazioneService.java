@@ -39,7 +39,7 @@ public class PrenotazioneService {
     // 2. per la chiamata POST che crea la prenotazione
     public Prenotazione createPrenotazione(PrenotazioneDTO body) {
         Utente utenteFound = this.utenteService.findUtenteById(body.utenteId());
-        Evento eventoFound = this.eventoService.findEventoById(body.eventoID());
+        Evento eventoFound = this.eventoService.findEventoById(body.eventoId());
 
         if (!body.dataPrenotazione().equals(eventoFound.getDataEvento())) {
             throw new BadRequestException("Impossibile prenotare, la data inserita per la prenotazione non corrisponde alla data dell'evento, oppure è stata già fatta la prenotazione");

@@ -47,7 +47,8 @@ public class UtenteService {
             throw new BadRequestException("L'email " + utente.getEmail() + " esiste già");
         });
 
-        Utente newUtente = new Utente(body.nome(), body.cognome(), body.eta(), body.email(), bCrypt.encode(body.password()));
+        Utente newUtente = new Utente(body.nome(), body.cognome(), body.eta(), body.email(), bCrypt.encode(body.password()), body.role());
+        newUtente.setAvatar_url("https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome());
         this.utenteRepository.save(newUtente);
         log.info("L'utente " + newUtente.getNome() + " " + newUtente.getCognome() + " con ID: " + newUtente.getId() + " è stato salvato correttamente");
 

@@ -1,6 +1,7 @@
 package claudiopostiglione.gestionaleEventi.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({"password","authorities", "enabled", "accountNonLocked", "accountNonExpired", "credentialsNonExpired"})
 public class Utente implements UserDetails {
 
     //Attributi
@@ -45,16 +47,17 @@ public class Utente implements UserDetails {
 
 
     //Costruttori
-    public Utente(String nome, String cognome, int eta, String email, String password) {
+    public Utente(String nome, String cognome, int eta, String email, String password, RuoloUtente role) {
 
-        Random rdm = new Random();
-        String[] roles = {"UTENTE_NORMALE", "ORGANIZZATORE_DI_EVENTI", "ADMIN"};
-        RuoloUtente role = RuoloUtente.valueOf(roles[rdm.nextInt(0, 3)]);
+//        Random rdm = new Random();
+//        String[] roles = {"UTENTE_NORMALE", "ORGANIZZATORE_DI_EVENTI", "ADMIN"};
+//        RuoloUtente role = RuoloUtente.valueOf(roles[rdm.nextInt(0, 2)]);
 
         this.nome = nome;
         this.cognome = cognome;
         this.eta = eta;
         this.email = email;
+        this.password = password;
         this.role = role;
     }
 

@@ -13,6 +13,6 @@ public record PrenotazioneDTO(
         @NotNull(message = "L'ID dell'utente non deve essere nullo")
         UUID utenteId,
         @NotNull(message = "L'ID dell'evento non deve essere nullo")
-        UUID eventoID
+        UUID eventoId
 ) {
 }
