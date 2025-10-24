@@ -80,8 +80,13 @@ public class PrenotazioneService {
     }
 
     // 5. per la chiamata DELETE di una prenotazione
-    public void findPrenotazioneByIdAndDelete(UUID utenteId) {
-        Prenotazione prenotazioneFound = this.findPrenotazioneById(utenteId);
+    public void findPrenotazioneByIdAndDelete(UUID prenotazioneId, Utente currentUtente) {
+
+        Utente utenteFound = this.utenteService.findUtenteById(currentUtente.getId());
+
+        Prenotazione prenotazioneFound = this.findPrenotazioneById(prenotazioneId);
+        if(!utenteFound.getId().equals(prenotazioneFound.getUtente().getId())) throw new BadRequestException("Attenzione, l'ID che hai inserito non è il tuo!");
+
         this.prenotazioneRepository.delete(prenotazioneFound);
     }
 }
