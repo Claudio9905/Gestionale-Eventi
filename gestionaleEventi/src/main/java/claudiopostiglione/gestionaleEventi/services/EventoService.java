@@ -25,7 +25,7 @@ public class EventoService {
 
     //OPERAZIONI CRUD per gli eventi
 
-    // 1. per la chiamata GET che restituisce la lista degli eventi
+    // 2. per la chiamata GET che restituisce la lista degli eventi
     public Page<Evento> findAllEventi(int numPage, int sizePage, String sortBy) {
         if (sizePage > 30) sizePage = 30;
         sortBy = "titolo";
@@ -33,12 +33,12 @@ public class EventoService {
         return this.eventoRepository.findAll(pageable);
     }
 
-    // 2. per la chiamata GET per un singolo evento
+    // 3. per la chiamata GET per un singolo evento
     public Evento findEventoById(UUID eventoId) {
         return this.eventoRepository.findById(eventoId).orElseThrow(() -> new IdNotFoundException("L'evento con ID: " + eventoId + " non è stato trovato"));
     }
 
-    // 3. per la chiamata PUT per la modifica dell'evento
+    // 4. per la chiamata PUT per la modifica dell'evento
     public Evento findEventoByIdAndUpdate(UUID eventoId, EventoDTO body) {
 
         Evento eventoFound = this.findEventoById(eventoId);
@@ -55,7 +55,7 @@ public class EventoService {
         return updateEvento;
     }
 
-    // 4. per la chiamata DELETE di un'evento
+    // 5. per la chiamata DELETE di un'evento
     public void findEventoByIdAndDelete(UUID eventoId) {
         Evento eventoFound = this.findEventoById(eventoId);
         this.eventoRepository.delete(eventoFound);
