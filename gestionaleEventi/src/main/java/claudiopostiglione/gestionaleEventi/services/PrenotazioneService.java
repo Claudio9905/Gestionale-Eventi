@@ -44,12 +44,19 @@ public class PrenotazioneService {
         if (!body.dataPrenotazione().equals(eventoFound.getDataEvento())) {
             throw new BadRequestException("Impossibile prenotare, la data inserita per la prenotazione non corrisponde alla data dell'evento, oppure è stata già fatta la prenotazione");
         }
+        if(eventoFound.getNumPostDisp() == 0){
+            throw new BadRequestException("Impossibile prenotare, posti esauriti");
+        }
 
         Prenotazione newPrenotazione = new Prenotazione(body.dataPrenotazione(), utenteFound, eventoFound);
         utenteFound.getListaPrenotazioni().add(newPrenotazione);
         eventoFound.getListaPrenotazioni().add(newPrenotazione);
 
         this.prenotazioneRepository.save(newPrenotazione);
+
+        int numPosti = eventoFound.getNumPostDisp();
+        numPosti--;
+        eventoFound.setNumPostDisp(numPosti);
 
         return newPrenotazione;
 

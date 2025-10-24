@@ -1,11 +1,11 @@
 package claudiopostiglione.gestionaleEventi.payload;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record EventoDTO(
         @NotBlank(message = "Il titolo è obbligatorio")
@@ -20,6 +20,8 @@ public record EventoDTO(
         @Size(min = 2, max = 20, message = "Il luogo deve avere un minimo di 2 caratteri e un massimo di 20")
         String luogo,
         @NotNull(message = "Il numero di posti non può essere nullo")
-        int numPostDisp
+        int numPostDisp,
+        @NotNull(message = "L'ID dell'utente non può essere nullo")
+        UUID utenteId
 ) {
 }
