@@ -30,4 +30,9 @@ public class ExceptionsHandler extends RuntimeException {
         return new ErrorsDTO(ex.getMessage(), LocalDate.now());
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorsDTO handleNotFoundException(NotFoundException ex) {
+        return new ErrorsDTO(ex.getMessage(), LocalDate.now());
+    }
 }

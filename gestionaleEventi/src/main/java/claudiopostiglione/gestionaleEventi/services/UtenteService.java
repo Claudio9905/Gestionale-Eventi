@@ -33,7 +33,7 @@ public class UtenteService {
         Pageable pageable = PageRequest.of(numPage, sizePage, Sort.by(sortBy).ascending());
         return this.utenteRepository.findAll(pageable);
     }
-    
+
     // 2. per la chiamata GET per un singolo utente
     public Utente findUtenteById(UUID utenteId) {
         return this.utenteRepository.findById(utenteId).orElseThrow(() -> new IdNotFoundException("L'utente con ID: " + utenteId + " non è stato trovato"));
@@ -63,7 +63,7 @@ public class UtenteService {
         return updateUtente;
     }
 
-    // per la chiamata DELETE di un utente
+    // 4. per la chiamata DELETE di un utente
     public void findUtenteByIdAndDelete(UUID utenteId){
         Utente utenteFound = this.findUtenteById(utenteId);
         this.utenteRepository.delete(utenteFound);
